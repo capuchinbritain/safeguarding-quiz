@@ -1,5 +1,5 @@
 const scriptURL =
-  "https://script.google.com/macros/s/AKfycbwacXvRwtwcoDzZgI00OOgjm6FMxla3zRt7dVJH9IXR5lmCUXSYrc9_qxHWVDXBfxwIVA/exec";
+  "https://script.google.com/macros/s/AKfycbyUSOYRylafycC68u-aViF70WtPHnFc2wYP9pr_8DXk8mW4B4it4NB92wVGssxPHUv7/exec";
 
 let questions = [];
 let currentQuestion = 0;
