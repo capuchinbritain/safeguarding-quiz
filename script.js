@@ -1,5 +1,5 @@
 const scriptURL =
-  "https://script.google.com/macros/s/AKfycbxS2JOJzzYJXGUvrix0omI_4eRDWRchczqWDwX09LyM5mEbEZpW8WgFJ5IFCbe6hrX9Jw/exec";
+  "https://script.google.com/macros/s/AKfycbz1BiM6SCjPFZE3qmN9RNj0bp0WM-kSnBHqW1X0504Ll4_h9uNWRNd-pUUOK1N2n3f5jg/exec";
 
 let questions = [];
 let currentQuestion = 0;
@@ -37,6 +37,7 @@ function getAttempts(email) {
   const data = JSON.parse(localStorage.getItem("quizAttempts") || "{}");
   return data[email] || 0;
 }
+
 function incrementAttempts(email) {
   const data = JSON.parse(localStorage.getItem("quizAttempts") || "{}");
   data[email] = (data[email] || 0) + 1;
@@ -65,7 +66,13 @@ startBtn.addEventListener("click", async () => {
 
   // Fetch questions before showing instructions
   try {
-    const res = await fetch(`${scriptURL}?action=getQuestions`);
+    const res = await fetch(`${scriptURL}?action=getQuestions`, {
+      method: "GET",
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    if (!res.ok) throw new Error("Failed to fetch questions");
     questions = await res.json();
 
     if (!questions || !questions.length) {
@@ -187,8 +194,10 @@ async function submitQuiz() {
   const correctAnswers = questions.map((q) => q.correct || []);
 
   try {
-    await fetch(scriptURL, {
+    const res = await fetch(scriptURL, {
       method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         action: "saveResult",
         name: userName,
@@ -199,6 +208,11 @@ async function submitQuiz() {
         correctAnswers: correctAnswers,
       }),
     });
+
+    const data = await res.json();
+    if (!data || data.status !== "success") {
+      console.error("Error saving result:", data);
+    }
   } catch (err) {
     console.error("Error saving result:", err);
   }
